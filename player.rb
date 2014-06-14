@@ -4,10 +4,10 @@ class Player
 
   def initialize(window)
     @window = window
-    @ship = Gosu::Image.new(window, 'images/ship.png')
-    @ship_thrust = [Gosu::Image.new(window, 'images/shipthrust1.png'),
-                    Gosu::Image.new(window, 'images/shipthrust2.png')]
-    @bullets = Gosu::Image.load_tiles(self, "images/missiles.png", 32, 60, false)
+    @ship = Gosu::Image.new(window, 'images/ship1.png')
+    @ship_thrust = [Gosu::Image.new(window, 'images/shipthrust1a.png'),
+                    Gosu::Image.new(window, 'images/shipthrust2a.png')]
+    @bullet_images = Gosu::Image.load_tiles(window, "images/missiles.png", 24, 45, false)
     @x = ((window.width / 2) - (@ship.width / 2)).to_f
     @y = ((window.height / 2) - (@ship.width / 2)).to_f
     @cx = @x + (@ship.width / 2)
@@ -18,7 +18,8 @@ class Player
     @current_thrust = false
     @angle = 0
     @side = -1
-    @timer = Timer.new
+    @last_shot_time = Time.now
+    @fired = false
     @bullets = []
   end
 
@@ -49,6 +50,15 @@ class Player
     if @x < 0 then @x = SCREEN_WIDTH end
     if @y > SCREEN_HEIGHT then @y = 0 end
     if @y < 0 then @y = SCREEN_HEIGHT end
+
+    if Time.now - @last_shot_time > 0.25
+      @last_shot_time = Time.now
+      @fired = false
+    end
+
+    @bullets.each do |b|
+      b.update
+    end
   end
 
   def draw
@@ -60,14 +70,28 @@ class Player
     end
 
     @current_thrust = false
+
+    if bullets.size != 0
+      bullets.each do |b|
+        b.draw(@bullet_images)
+      end
+    end
   end
 
   def fire
+    if @fired == false
+      # bx = 0
+      # if @side == -1 then bx = @x - 22 end
+      # if @side == 1 then bx = @x + 22 end
 
-    bx = 0
-    if @side == -1 then bx = @x + 18 end
-    if @side == 1 then bx = @x + 60 end
-    @bullets << Bullet.new(@window, bx, @y, @x_vel, @y_vel)
+      radians = (@angle - 90) * Math::PI / 180.0
+      x_comp = 15 * Math.cos(radians)
+      y_comp = 15 * Math.sin(radians)
+
+      @bullets << Bullet.new(@window, @x, @y, x_comp, y_comp, @angle)
+      @fired = true
+      @side == 1 ? @side = -1 : @side = 1
+    end
   end
 
   def turn_right
@@ -77,7 +101,7 @@ class Player
 
   def turn_left
     @angle -= 5
-    if @angle < -355 then @angle = 0 end
+    if @angle < 0 then @angle = 355 end
   end
 
   def thrust

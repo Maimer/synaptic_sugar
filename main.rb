@@ -32,14 +32,15 @@ class Main <Gosu::Window
       @player.turn_left
     end
     @player.update
+
+    @player.bullets.reject! do |b|
+      b.x < 0 || b.x > SCREEN_WIDTH || b.y < 0 || b.y > SCREEN_HEIGHT
+    end
   end
 
   def draw
     @background.draw
     @player.draw
-    if @player.bullets.size != 0
-      @player.bullets.draw
-    end
     draw_text(15, -10, "Angle: #{@player.angle}", @small_font, Gosu::Color::WHITE)
   end
 
