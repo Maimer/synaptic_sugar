@@ -23,7 +23,7 @@ class Player
     @bullets = []
   end
 
-  def update
+  def update(asteroids)
     radians = (@angle - 90) * Math::PI / 180.0
     x_comp = @thrust * Math.cos(radians)
     y_comp = @thrust * Math.sin(radians)
@@ -52,12 +52,20 @@ class Player
     if @y < 0 then @y = SCREEN_HEIGHT end
 
     if Time.now - @last_shot_time > 0.25
-      @last_shot_time = Time.now
       @fired = false
+      @last_shot_time = Time.now
     end
 
     @bullets.each do |b|
       b.update
+    end
+
+    if asteroids.size != 0 && @bullets.size != 0
+      asteroids.reject! do |a|
+        @bullets.reject! do |b|
+          Gosu::distance(a.x, a.y, b.x, b.y) < 50
+        end
+      end
     end
   end
 
@@ -107,6 +115,6 @@ class Player
   def thrust
     @current_thrust = true
     @thrust += 0.02
-    if @thrust > 2 then @thrust = 2 end
+    if @thrust > 0.15 then @thrust = 0.15 end
   end
 end
