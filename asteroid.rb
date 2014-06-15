@@ -1,13 +1,13 @@
 class Asteroid
 
-  attr_reader :x, :y
+  attr_reader :x, :y, :asteroid
 
-  def initialize(window, x, y)
+  def initialize(window, x, y, x_vel, y_vel)
     @window = window
     @x = x
     @y = y
-    @y_vel = rand(4) + 1
-    @x_vel = rand(4) + 1
+    @y_vel = x_vel
+    @x_vel = y_vel
     @asteroid = rand(6)
     @angle = 0
     if rand(2) == 1
@@ -25,5 +25,11 @@ class Asteroid
 
   def draw(asteroids)
     asteroids[@asteroid].draw_rot(@x, @y, 7, @angle)
+    if @window.debug == true
+      @window.draw_line(@x, @y, Gosu::Color::GREEN, @x + asteroids[@asteroid].width, @y, Gosu::Color::GREEN, 20)
+      @window.draw_line(@x, @y, Gosu::Color::GREEN, @x, @y + asteroids[@asteroid].height, Gosu::Color::GREEN, 20)
+      @window.draw_line(@x, @y + asteroids[@asteroid].height, Gosu::Color::GREEN, @x + asteroids[@asteroid].width, @y + asteroids[@asteroid].height, Gosu::Color::GREEN, 20)
+      @window.draw_line(@x + asteroids[@asteroid].width, @y, Gosu::Color::GREEN, @x + asteroids[@asteroid].width, @y + asteroids[@asteroid].height, Gosu::Color::GREEN, 20)
+    end
   end
 end

@@ -6,6 +6,8 @@ class Bullet
     @window = window
     @x = x
     @y = y
+    @cx = 0
+    @cy = 0
     @x_vel = x_vel
     @y_vel = y_vel
     @angle = angle
@@ -17,7 +19,7 @@ class Bullet
   end
 
   def draw(bullets)
-    img = bullets[(Gosu::milliseconds / 50) % (bullets.size - 5) + 5]
+    img = bullets[(Gosu::milliseconds / 50) % (bullets.size)]
     # img2 = bullets[(Gosu::milliseconds / 50) % (bullets.size - 2)]
     img.draw_rot(@x, @y, 9, @angle)
     # img2.draw_rot(@x, @y, 8, @angle)

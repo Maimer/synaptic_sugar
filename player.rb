@@ -4,10 +4,10 @@ class Player
 
   def initialize(window)
     @window = window
-    @ship = Gosu::Image.new(window, 'images/ship1.png')
-    @ship_thrust = [Gosu::Image.new(window, 'images/shipthrust1a.png'),
-                    Gosu::Image.new(window, 'images/shipthrust2a.png')]
-    @bullet_images = Gosu::Image.load_tiles(window, "images/missiles.png", 24, 45, false)
+    @ship = Gosu::Image.new(window, 'images/ship/ship1.png')
+    @ship_thrust = [Gosu::Image.new(window, 'images/ship/shipthrust1a.png'),
+                    Gosu::Image.new(window, 'images/ship/shipthrust2a.png')]
+    @bullet_images = Gosu::Image.load_tiles(window, "images/ship/missiles.png", 24, 45, false)
     @x = ((window.width / 2) - (@ship.width / 2)).to_f
     @y = ((window.height / 2) - (@ship.width / 2)).to_f
     @cx = @x + (@ship.width / 2)
@@ -23,7 +23,7 @@ class Player
     @bullets = []
   end
 
-  def update(asteroids)
+  def update
     radians = (@angle - 90) * Math::PI / 180.0
     x_comp = @thrust * Math.cos(radians)
     y_comp = @thrust * Math.sin(radians)
@@ -56,15 +56,12 @@ class Player
       @last_shot_time = Time.now
     end
 
-    @bullets.each do |b|
-      b.update
-    end
-
-    if asteroids.size != 0 && @bullets.size != 0
-      asteroids.reject! do |a|
-        @bullets.reject! do |b|
-          Gosu::distance(a.x, a.y, b.x, b.y) < 50
-        end
+    if @bullets.size != 0
+      @bullets.each do |b|
+        b.update
+      end
+      @bullets.reject! do |b|
+        b.x < 0 || b.x > SCREEN_WIDTH || b.y < 0 || b.y > SCREEN_HEIGHT
       end
     end
   end
@@ -88,15 +85,22 @@ class Player
 
   def fire
     if @fired == false
-      # bx = 0
-      # if @side == -1 then bx = @x - 22 end
-      # if @side == 1 then bx = @x + 22 end
-
       radians = (@angle - 90) * Math::PI / 180.0
-      x_comp = 15 * Math.cos(radians)
-      y_comp = 15 * Math.sin(radians)
+      bx = 0
+      by = 0
+      if @side == -1
+        bx = @x + (22 * Math.sin(radians))
+        yx = @y + (22 * Math.cos(radians))
+      end
+      if @side == 1
+        bx = @x - (22 * Math.sin(radians))
+        yx = @y - (22 * Math.cos(radians))
+      end
 
-      @bullets << Bullet.new(@window, @x, @y, x_comp, y_comp, @angle)
+      x_comp = 10 * Math.cos(radians)
+      y_comp = 10 * Math.sin(radians)
+
+      @bullets << Bullet.new(@window, bx, yx, x_comp, y_comp, @angle)
       @fired = true
       @side == 1 ? @side = -1 : @side = 1
     end
@@ -114,7 +118,7 @@ class Player
 
   def thrust
     @current_thrust = true
-    @thrust += 0.02
+    @thrust += 0.01
     if @thrust > 0.15 then @thrust = 0.15 end
   end
 end
