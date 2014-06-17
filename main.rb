@@ -37,6 +37,7 @@ class Main < Gosu::Window
     @asteroidfield.draw
     draw_text(18, -1, "Speed: #{@player.speed.round(2)}", @small_font, Gosu::Color::WHITE)
     draw_text(1150, -1, "Asteroids: #{@player.asteroid_count}", @small_font, Gosu::Color::WHITE)
+    # draw_text(1150, 50, "Rate: #{@asteroidfield.rate}", @small_font, Gosu::Color::WHITE)
     draw_rect(SCREEN_WIDTH / 2 - 200, 15, @player.health * 4, 30, 0xFFB00C00)
     draw_rect(SCREEN_WIDTH / 2 - 205, 10, 410, 5, 0xFF7A7A7A)
     # draw_rect(0, 10, 410, 5, 0xFF7A7A7A)

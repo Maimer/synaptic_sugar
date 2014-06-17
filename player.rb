@@ -88,6 +88,13 @@ class Player
       asteroids.each do |asteroid|
         if Gosu::distance(@x, @y, asteroid.x, asteroid.y) < (images[asteroid.asteroid].width + @ship.width) / 2 - 10
 
+          @health -= ((@x_vel - asteroid.x_vel) * images[asteroid.asteroid].width / 35).abs
+          @health -= ((@y_vel - asteroid.y_vel) * images[asteroid.asteroid].width / 35).abs
+
+          if @health < 0
+            @health = 0
+          end
+
           sx = @x_vel
           sy = @y_vel
 
@@ -100,11 +107,6 @@ class Player
                            (@ship.width + images[asteroid.asteroid].width)
           asteroid.y_vel = (asteroid.y_vel * (images[asteroid.asteroid].width - @ship.width) + 2 * @ship.width * sy) /
                            (@ship.width + images[asteroid.asteroid].width)
-
-          @health -= @speed * images[asteroid.asteroid].width / 25
-          if @health < 0
-            @health = 0
-          end
         end
       end
     end

@@ -1,7 +1,7 @@
 class Asteroid
 
   attr_reader :x, :y, :asteroid
-  attr_accessor :x_vel, :y_vel, :angle
+  attr_accessor :x_vel, :y_vel, :angle, :checked
 
   def initialize(window, x, y, x_vel, y_vel)
     @window = window
@@ -11,6 +11,7 @@ class Asteroid
     @x_vel = y_vel
     @asteroid = rand(6)
     @angle = 0
+    @checked = false
     if rand(2) == 1
       @angle_vel = rand(4) + 1
     else

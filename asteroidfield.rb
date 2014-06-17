@@ -1,6 +1,6 @@
 class AsteroidField
 
-  attr_reader :asteroid_images
+  attr_reader :asteroid_images, :rate
   attr_accessor :asteroids
 
   def initialize(window, player)
@@ -15,10 +15,19 @@ class AsteroidField
     @explosion_images = Gosu::Image.load_tiles(@window, "images/explosion.png", 106, 98, false)
     @explosions = []
     @player = player
+    @timer = Timer.new
+    @increase = 0
+    @rate = 0
   end
 
   def update(bullets)
-    if rand(20) + 1 == 1
+    @rate = 30 - @increase
+    @increase = (@timer.seconds / 2).to_i
+    @timer.update
+    if @rate < 5
+      @rate = 5
+    end
+    if rand(@rate) == 0
       random = rand(4)
       if random == 0
         x = rand(SCREEN_WIDTH) + 1
@@ -93,6 +102,38 @@ class AsteroidField
     if @explosions.size != 0
       @explosions.reject! do |e|
         Gosu::milliseconds - e.start > 300
+      end
+    end
+
+    if @asteroids.size != 0
+      @asteroids.each do |asteroid|
+        asteroid.checked = false
+      end
+    end
+
+    if @asteroids.size != 0
+      @asteroids.each do |asteroid1|
+        @asteroids.each do |asteroid2|
+          if asteroid2.checked != true
+            if asteroid1.object_id != asteroid2.object_id
+              if Gosu::distance(asteroid1.x, asteroid1.y, asteroid2.x, asteroid2.y) < (@asteroid_images[asteroid1.asteroid].width + @asteroid_images[asteroid2.asteroid].width) / 2 - 10
+
+                a1x = asteroid1.x_vel
+                a1y = asteroid1.y_vel
+
+                a1_image = @asteroid_images[asteroid1.asteroid].width
+                a2_image = @asteroid_images[asteroid2.asteroid].width
+
+                asteroid1.x_vel = (a1x * (a1_image - a2_image) + 2 * a2_image * asteroid2.x_vel) / (a1_image + a2_image)
+                asteroid1.y_vel = (a1y * (a1_image - a2_image) + 2 * a2_image * asteroid2.y_vel) / (a1_image + a2_image)
+
+                asteroid2.x_vel = (asteroid2.x_vel * (a2_image - a1_image) + 2 * a1_image * a1x) / (a1_image + a2_image)
+                asteroid2.y_vel = (asteroid2.y_vel * (a2_image - a1_image) + 2 * a1_image * a1y) / (a1_image + a2_image)
+              end
+            end
+          end
+        end
+        asteroid1.checked = true
       end
     end
   end
