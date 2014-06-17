@@ -1,6 +1,7 @@
 class Player
 
   attr_reader :angle, :bullets, :speed, :health
+  attr_accessor :asteroid_count
 
   def initialize(window)
     @window = window
@@ -19,8 +20,9 @@ class Player
     @last_shot_time = Gosu::milliseconds
     @fired = false
     @bullets = []
-    @speed = 0
+    @speed = 0.0
     @health = 100.0
+    @asteroid_count = 0
   end
 
   def update(asteroids, images)
@@ -98,6 +100,11 @@ class Player
                            (@ship.width + images[asteroid.asteroid].width)
           asteroid.y_vel = (asteroid.y_vel * (images[asteroid.asteroid].width - @ship.width) + 2 * @ship.width * sy) /
                            (@ship.width + images[asteroid.asteroid].width)
+
+          @health -= @speed * images[asteroid.asteroid].width / 25
+          if @health < 0
+            @health = 0
+          end
         end
       end
     end

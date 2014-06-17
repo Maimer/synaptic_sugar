@@ -3,7 +3,7 @@ class AsteroidField
   attr_reader :asteroid_images
   attr_accessor :asteroids
 
-  def initialize(window)
+  def initialize(window, player)
     @window = window
     @asteroid_images = [Gosu::Image.new(@window, "images/asteroids/a1.png"),
                         Gosu::Image.new(@window, "images/asteroids/a2.png"),
@@ -14,6 +14,7 @@ class AsteroidField
     @asteroids = []
     @explosion_images = Gosu::Image.load_tiles(@window, "images/explosion.png", 106, 98, false)
     @explosions = []
+    @player = player
   end
 
   def update(bullets)
@@ -75,6 +76,7 @@ class AsteroidField
             x = a.x - @explosion_images[0].width / 2
             y = a.y - @explosion_images[0].height / 2
             @explosions << Explosion.new(@window, x, y)
+            @player.asteroid_count += 1
           end
         end
       end

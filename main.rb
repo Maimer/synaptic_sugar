@@ -21,7 +21,7 @@ class Main < Gosu::Window
 
     @background = Background.new(self)
     @player = Player.new(self)
-    @asteroidfield = AsteroidField.new(self)
+    @asteroidfield = AsteroidField.new(self, @player)
     @small_font = Gosu::Font.new(self, "Tahoma", SCREEN_HEIGHT / 20)
     @debug = false
   end
@@ -35,10 +35,13 @@ class Main < Gosu::Window
     @background.draw
     @player.draw
     @asteroidfield.draw
-    draw_text(15, -10, "Speed: #{@player.speed.round(2)}", @small_font, Gosu::Color::WHITE)
+    draw_text(18, -1, "Speed: #{@player.speed.round(2)}", @small_font, Gosu::Color::WHITE)
+    draw_text(1150, -1, "Asteroids: #{@player.asteroid_count}", @small_font, Gosu::Color::WHITE)
     draw_rect(SCREEN_WIDTH / 2 - 200, 15, @player.health * 4, 30, 0xFFB00C00)
     draw_rect(SCREEN_WIDTH / 2 - 205, 10, 410, 5, 0xFF7A7A7A)
+    # draw_rect(0, 10, 410, 5, 0xFF7A7A7A)
     draw_rect(SCREEN_WIDTH / 2 - 205, 45, 410, 5, 0xFF7A7A7A)
+    # draw_rect(0, 45, 410, 5, 0xFF7A7A7A)
     draw_rect(SCREEN_WIDTH / 2 - 205, 15, 5, 30, 0xFF7A7A7A)
     draw_rect(SCREEN_WIDTH / 2 + 200, 15, 5, 30, 0xFF7A7A7A)
 
@@ -55,7 +58,7 @@ class Main < Gosu::Window
   end
 
   def draw_text(x, y, text, font, color)
-    font.draw(text, x, y, 3, 1, 1, color)
+    font.draw(text, x, y, 20, 1, 1, color)
   end
 
   def draw_rect(x, y, width, height, color)
