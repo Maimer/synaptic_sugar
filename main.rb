@@ -27,18 +27,7 @@ class Main < Gosu::Window
   end
 
   def update
-    if button_down?(Gosu::KbUp)
-      @player.thrust
-    end
-    if button_down?(Gosu::KbF)
-      @player.fire
-    end
-    if button_down?(Gosu::KbRight)
-      @player.turn_right
-    elsif button_down?(Gosu::KbLeft)
-      @player.turn_left
-    end
-    @player.update
+    @player.update(@asteroidfield.asteroids, @asteroidfield.asteroid_images)
     @asteroidfield.update(@player.bullets)
   end
 
@@ -46,7 +35,14 @@ class Main < Gosu::Window
     @background.draw
     @player.draw
     @asteroidfield.draw
-    draw_text(15, -10, "Angle: #{@player.angle}", @small_font, Gosu::Color::WHITE)
+    draw_text(15, -10, "Speed: #{@player.speed.round(2)}", @small_font, Gosu::Color::WHITE)
+    draw_rect(SCREEN_WIDTH / 2 - 200, 15, @player.health * 4, 30, 0xFFB00C00)
+    draw_rect(SCREEN_WIDTH / 2 - 205, 10, 410, 5, 0xFF7A7A7A)
+    draw_rect(SCREEN_WIDTH / 2 - 205, 45, 410, 5, 0xFF7A7A7A)
+    draw_rect(SCREEN_WIDTH / 2 - 205, 15, 5, 30, 0xFF7A7A7A)
+    draw_rect(SCREEN_WIDTH / 2 + 200, 15, 5, 30, 0xFF7A7A7A)
+
+
   end
 
   def button_down(id)
@@ -60,6 +56,13 @@ class Main < Gosu::Window
 
   def draw_text(x, y, text, font, color)
     font.draw(text, x, y, 3, 1, 1, color)
+  end
+
+  def draw_rect(x, y, width, height, color)
+    draw_quad(x, y, color,
+      x + width, y, color,
+      x + width, y + height, color,
+      x, y + height, color, 10)
   end
 end
 

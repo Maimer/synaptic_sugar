@@ -10,7 +10,7 @@ class Explosion
   end
 
   def draw(explosions)
-    img = explosions[(Gosu::milliseconds / 40) % explosions.size]
+    img = explosions[((Gosu::milliseconds - @start) / 50) % explosions.size]
     img.draw(@x, @y, 8)
     if @window.debug == true
       @window.draw_line(@x, @y, Gosu::Color::GREEN, @x + explosions[0].width, @y, Gosu::Color::GREEN, 20)

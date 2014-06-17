@@ -1,6 +1,7 @@
 class Asteroid
 
   attr_reader :x, :y, :asteroid
+  attr_accessor :x_vel, :y_vel, :angle
 
   def initialize(window, x, y, x_vel, y_vel)
     @window = window

@@ -5,7 +5,7 @@ class Server
   finalizer :shutdown
 
   def initialize(host, port)
-    puts "Starting Tanks Arena at #{host}:#{port}."
+    puts "Starting Synaptic Sugar Server at #{host}:#{port}."
     @server = TCPServer.new(host, port)
     @sprites = Hash.new # all the sprites, key is sprite uuid
     @players = Hash.new # the players in the game, key is server:port
@@ -62,7 +62,7 @@ class Server
 end
 
 server, port = ARGV[0] || "0.0.0.0", ARGV[1] || 1234
-supervisor = Arena.supervise(server, port.to_i)
+supervisor = Server.supervise(server, port.to_i)
 trap("INT") do
   supervisor.terminate
   exit

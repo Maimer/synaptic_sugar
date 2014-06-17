@@ -1,5 +1,6 @@
 class AsteroidField
 
+  attr_reader :asteroid_images
   attr_accessor :asteroids
 
   def initialize(window)
@@ -70,7 +71,7 @@ class AsteroidField
     if @asteroids.size != 0 && bullets.size != 0
       @asteroids.each do |a|
         bullets.each do |b|
-          if Gosu::distance(a.x, a.y, b.x, b.y) < @asteroid_images[a.asteroid].width / 2
+          if Gosu::distance(a.x, a.y, b.x, b.y) < @asteroid_images[a.asteroid].width / 2 + 10
             x = a.x - @explosion_images[0].width / 2
             y = a.y - @explosion_images[0].height / 2
             @explosions << Explosion.new(@window, x, y)
@@ -82,14 +83,14 @@ class AsteroidField
     if @asteroids.size != 0 && bullets.size != 0
       @asteroids.reject! do |a|
         bullets.reject! do |b|
-          Gosu::distance(a.x, a.y, b.x, b.y) < @asteroid_images[a.asteroid].width / 2
+          Gosu::distance(a.x, a.y, b.x, b.y) < @asteroid_images[a.asteroid].width / 2 + 10
         end
       end
     end
 
     if @explosions.size != 0
       @explosions.reject! do |e|
-        Gosu::milliseconds - e.start > 320
+        Gosu::milliseconds - e.start > 300
       end
     end
   end

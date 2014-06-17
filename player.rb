@@ -1,6 +1,6 @@
 class Player
 
-  attr_reader :angle, :bullets
+  attr_reader :angle, :bullets, :speed, :health
 
   def initialize(window)
     @window = window
@@ -8,33 +8,53 @@ class Player
     @ship_thrust = [Gosu::Image.new(window, 'images/ship/shipthrust1a.png'),
                     Gosu::Image.new(window, 'images/ship/shipthrust2a.png')]
     @bullet_images = Gosu::Image.load_tiles(window, "images/ship/missiles.png", 24, 45, false)
-    @x = ((window.width / 2) - (@ship.width / 2)).to_f
-    @y = ((window.height / 2) - (@ship.width / 2)).to_f
-    @cx = @x + (@ship.width / 2)
-    @cy = @y + (@ship.width * 0.46)
+    @x = (window.width / 2).to_f
+    @y = (window.height / 2).to_f
     @thrust = 0.0
     @x_vel = 0.0
     @y_vel = 0.0
     @current_thrust = false
     @angle = 0
     @side = -1
-    @last_shot_time = Time.now
+    @last_shot_time = Gosu::milliseconds
     @fired = false
     @bullets = []
+    @speed = 0
+    @health = 100.0
   end
 
-  def update
+  def update(asteroids, images)
+    if Gosu::milliseconds - @last_shot_time >= 250
+      @fired = false
+      @last_shot_time = Gosu::milliseconds
+    end
+
+    if @window.button_down?(Gosu::KbUp)
+      self.thrust
+    end
+    if @window.button_down?(Gosu::KbF)
+      self.fire
+    end
+    if @window.button_down?(Gosu::KbRight)
+      self.turn_right
+    elsif @window.button_down?(Gosu::KbLeft)
+      self.turn_left
+    end
+
     radians = (@angle - 90) * Math::PI / 180.0
     x_comp = @thrust * Math.cos(radians)
     y_comp = @thrust * Math.sin(radians)
 
     if @current_thrust == true
-      # if (Math.sqrt(((@x_vel + x_comp)**2) + ((@y_vel + y_comp)**2)) >= 10) && @x_vel > 0
-      #   @y_vel += y_comp
-      #   @x_vel -= y_comp
-      # elsif (Math.sqrt(((@x_vel + x_comp)**2) + ((@y_vel + y_comp)**2)) >= 10) && @x_vel < 0
-      #   @y_vel += y_comp
-      #   @x_vel -= y_comp
+      # if (Math.sqrt(((@x_vel + x_comp)**2) + ((@y_vel + y_comp)**2)) >= 10)
+
+        # if @x_vel.abs > @y_vel.abs
+        #   @x_vel -= y_comp
+        #   @y_vel += y_comp
+        # elsif @y_vel.abs > @x_vel.abs
+        #   @x_vel += x_comp
+        #   @y_vel -= x_comp
+        # end
       # else
         @x_vel += x_comp
         @y_vel += y_comp
@@ -51,17 +71,34 @@ class Player
     if @y > SCREEN_HEIGHT then @y = 0 end
     if @y < 0 then @y = SCREEN_HEIGHT end
 
-    if Time.now - @last_shot_time > 0.25
-      @fired = false
-      @last_shot_time = Time.now
-    end
-
     if @bullets.size != 0
       @bullets.each do |b|
         b.update
       end
       @bullets.reject! do |b|
         b.x < 0 || b.x > SCREEN_WIDTH || b.y < 0 || b.y > SCREEN_HEIGHT
+      end
+    end
+
+    @speed = Math.sqrt(@x_vel**2 + @y_vel**2)
+
+    if asteroids.size != 0
+      asteroids.each do |asteroid|
+        if Gosu::distance(@x, @y, asteroid.x, asteroid.y) < (images[asteroid.asteroid].width + @ship.width) / 2 - 10
+
+          sx = @x_vel
+          sy = @y_vel
+
+          @x_vel = (sx * (@ship.width - images[asteroid.asteroid].width) + 2 * images[asteroid.asteroid].width * asteroid.x_vel) /
+                   (@ship.width + images[asteroid.asteroid].width)
+          @y_vel = (sy * (@ship.width - images[asteroid.asteroid].width) + 2 * images[asteroid.asteroid].width * asteroid.y_vel) /
+                   (@ship.width + images[asteroid.asteroid].width)
+
+          asteroid.x_vel = (asteroid.x_vel * (images[asteroid.asteroid].width - @ship.width) + 2 * @ship.width * sx) /
+                           (@ship.width + images[asteroid.asteroid].width)
+          asteroid.y_vel = (asteroid.y_vel * (images[asteroid.asteroid].width - @ship.width) + 2 * @ship.width * sy) /
+                           (@ship.width + images[asteroid.asteroid].width)
+        end
       end
     end
   end
@@ -81,28 +118,36 @@ class Player
         b.draw(@bullet_images)
       end
     end
+
+    if @window.debug == true
+      @window.draw_line(@x, @y, Gosu::Color::GREEN, @x + @ship.width, @y, Gosu::Color::GREEN, 20)
+      @window.draw_line(@x, @y, Gosu::Color::GREEN, @x, @y + @ship.height, Gosu::Color::GREEN, 20)
+      @window.draw_line(@x, @y + @ship.height, Gosu::Color::GREEN, @x + @ship.width, @y + @ship.height, Gosu::Color::GREEN, 20)
+      @window.draw_line(@x + @ship.width, @y, Gosu::Color::GREEN, @x + @ship.width, @y + @ship.height, Gosu::Color::GREEN, 20)
+    end
   end
 
   def fire
     if @fired == false
+      @last_shot_time = Gosu::milliseconds
+      @fired = true
       radians = (@angle - 90) * Math::PI / 180.0
-      bx = 0
-      by = 0
-      if @side == -1
-        bx = @x + (22 * Math.sin(radians))
-        yx = @y + (22 * Math.cos(radians))
-      end
-      if @side == 1
-        bx = @x - (22 * Math.sin(radians))
-        yx = @y - (22 * Math.cos(radians))
-      end
+
+      # if @side == -1
+        bx = @x + (Math.sin(radians))
+        by = @y + (Math.cos(radians))
+      # end
+      # if @side == 1
+      #   bx = @x - (22 * Math.sin(radians))
+      #   by = @y - (22 * Math.cos(radians))
+      # end
 
       x_comp = 10 * Math.cos(radians)
       y_comp = 10 * Math.sin(radians)
 
-      @bullets << Bullet.new(@window, bx, yx, x_comp, y_comp, @angle)
-      @fired = true
-      @side == 1 ? @side = -1 : @side = 1
+      @bullets << Bullet.new(@window, bx, by, x_comp, y_comp, @angle)
+
+      # @side == 1 ? @side = -1 : @side = 1
     end
   end
 
