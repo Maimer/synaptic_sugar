@@ -27,46 +27,62 @@ class AsteroidField
     if @rate < 5
       @rate = 5
     end
+
+    asteroid_created = false
+
     if rand(@rate) == 0
-      random = rand(4)
-      if random == 0
-        x = rand(SCREEN_WIDTH) + 1
-        y = -100
-        if rand(2) == 1
-          x_vel = rand(4) + 1
+      while asteroid_created == false
+        random = rand(4)
+        if random == 0
+          x = rand(SCREEN_WIDTH) + 1
+          y = -100
+          if rand(2) == 1
+            x_vel = rand(4) + 1
+          else
+            x_vel = -(rand(4) + 1)
+          end
+          y_vel = rand(4) + 1
+        elsif random == 1
+          x = rand(SCREEN_WIDTH) + 1
+          y = SCREEN_HEIGHT + 100
+          if rand(2) == 1
+            x_vel = rand(4) + 1
+          else
+            x_vel = -(rand(4) + 1)
+          end
+          y_vel = -(rand(4) + 1)
+        elsif random == 2
+          x = -100
+          y = rand(SCREEN_HEIGHT) + 1
+          if rand(2) == 1
+            y_vel = rand(4) + 1
+          else
+            y_vel = -(rand(4) + 1)
+          end
+          x_vel = (rand(4) + 1)
         else
+          x = SCREEN_WIDTH + 100
+          y = rand(SCREEN_HEIGHT) + 1
+          if rand(2) == 1
+            y_vel = rand(4) + 1
+          else
+            y_vel = -(rand(4) + 1)
+          end
           x_vel = -(rand(4) + 1)
         end
-        y_vel = rand(4) + 1
-      elsif random == 1
-        x = rand(SCREEN_WIDTH) + 1
-        y = SCREEN_HEIGHT + 100
-        if rand(2) == 1
-          x_vel = rand(4) + 1
-        else
-          x_vel = -(rand(4) + 1)
+        new_asteroid = Asteroid.new(@window, x, y, x_vel, y_vel)
+        asteroid_created = true
+        if @asteroids.size != 0
+          @asteroids.each do |a|
+            if Gosu::distance(a.x, a.y, new_asteroid.x, new_asteroid.y) < @asteroid_images[a.asteroid].width + @asteroid_images[new_asteroid.asteroid].width + 10
+              asteroid_created = false
+            end
+          end
         end
-        y_vel = -(rand(4) + 1)
-      elsif random == 2
-        x = -100
-        y = rand(SCREEN_HEIGHT) + 1
-        if rand(2) == 1
-          y_vel = rand(4) + 1
-        else
-          y_vel = -(rand(4) + 1)
+        if asteroid_created == true
+          @asteroids << new_asteroid
         end
-        x_vel = (rand(4) + 1)
-      else
-        x = SCREEN_WIDTH + 100
-        y = rand(SCREEN_HEIGHT) + 1
-        if rand(2) == 1
-          y_vel = rand(4) + 1
-        else
-          y_vel = -(rand(4) + 1)
-        end
-        x_vel = -(rand(4) + 1)
       end
-      @asteroids << Asteroid.new(@window, x, y, x_vel, y_vel)
     end
 
     if @asteroids.size != 0
