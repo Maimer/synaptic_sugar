@@ -3,13 +3,13 @@ class Asteroid
   attr_reader :x, :y, :asteroid
   attr_accessor :x_vel, :y_vel, :angle, :checked
 
-  def initialize(window, x, y, x_vel, y_vel)
+  def initialize(window, x, y, x_vel, y_vel, image)
     @window = window
     @x = x
     @y = y
     @y_vel = x_vel
     @x_vel = y_vel
-    @asteroid = rand(6)
+    @asteroid = image
     @angle = 0
     @checked = false
     if rand(2) == 1

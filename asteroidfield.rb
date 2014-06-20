@@ -31,6 +31,7 @@ class AsteroidField
     asteroid_created = false
 
     if rand(@rate) == 0
+      asteroid_image = rand(6)
       while asteroid_created == false
         random = rand(4)
         if random == 0
@@ -70,7 +71,7 @@ class AsteroidField
           end
           x_vel = -(rand(4) + 1)
         end
-        new_asteroid = Asteroid.new(@window, x, y, x_vel, y_vel)
+        new_asteroid = Asteroid.new(@window, x, y, x_vel, y_vel, asteroid_image)
         asteroid_created = true
         if @asteroids.size != 0
           @asteroids.each do |a|

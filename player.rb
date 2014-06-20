@@ -151,8 +151,8 @@ class Player
       #   by = @y - (22 * Math.cos(radians))
       # end
 
-      x_comp = 10 * Math.cos(radians)
-      y_comp = 10 * Math.sin(radians)
+      x_comp = 12 * Math.cos(radians)
+      y_comp = 12 * Math.sin(radians)
 
       @bullets << Bullet.new(@window, bx, by, x_comp, y_comp, @angle)
 
