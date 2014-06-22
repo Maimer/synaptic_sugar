@@ -68,10 +68,22 @@ class Player
     @x += @x_vel
     @y += @y_vel
 
-    if @x > SCREEN_WIDTH then @x = 0 end
-    if @x < 0 then @x = SCREEN_WIDTH end
-    if @y > SCREEN_HEIGHT then @y = 0 end
-    if @y < 0 then @y = SCREEN_HEIGHT end
+    if @x > SCREEN_WIDTH - @ship.width / 2
+      @x_vel = -@x_vel * 0.75
+      @x = SCREEN_WIDTH - @ship.width / 2
+    end
+    if @x < 0 + @ship.width / 2
+      @x_vel = -@x_vel * 0.75
+      @x = 0 + @ship.width / 2
+    end
+    if @y > SCREEN_HEIGHT - @ship.height / 2
+      @y_vel = -@y_vel * 0.75
+      @y = SCREEN_HEIGHT - @ship.height / 2
+    end
+    if @y < 0 + @ship.height / 2
+      @y_vel = -@y_vel * 0.75
+      @y = 0 + @ship.height / 2
+    end
 
     if @bullets.size != 0
       @bullets.each do |b|
