@@ -24,6 +24,6 @@ Close: Escape
 
 ![Synaptic Sugar 1](https://raw.githubusercontent.com/Maimer/synaptic_sugar/master/screenshots/synaptic1.png)
 
-####Sample Level:
+####Sample Gameplay:
 
 ![Synaptic Sugar 2](https://raw.githubusercontent.com/Maimer/synaptic_sugar/master/screenshots/synaptic2.png)
